@@ -13,10 +13,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        self.window = UIWindow(windowScene: windowScene)
+        //1 навигационный контроллер
+        let navController = UINavigationController(rootViewController: InfoViewController())
+        //2 навигационный контроллер
+        let secondItemController = UINavigationController(rootViewController: HabitsViewController())
+        UINavigationBar.appearance().backgroundColor = UIColor(named: "White")
+        //создание панели вкладок
+        let tabBarController = UITabBarController()
+        
+        tabBarController.viewControllers = [
+            secondItemController, navController
+        ]
+        
+        tabBarController.viewControllers?.enumerated().forEach {
+            UITabBar.appearance().backgroundColor = .white
+            UITabBar.appearance().tintColor = UIColor(named: "Purple")
+            UITabBar.appearance().unselectedItemTintColor = .systemGray
+            $1.tabBarItem.title = $0 == 0 ? "Привычки" : "Информация"
+            $1.tabBarItem.image = $0 == 0
+            ? UIImage(systemName: "rectangle.grid.1x2.fill")
+            : UIImage(systemName: "info.circle.fill")
+           
+        }
+
+        self.window?.rootViewController = tabBarController
+        self.window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -6,10 +6,33 @@
 //
 
 import UIKit
+// добавление привычки
 protocol HabitViewControllerDelegate: AnyObject {
     func addHabit(_ habit: Habit)
 }
-class HabitViewController: UIViewController {
+// скрыть кнопку удаления привычки
+protocol HabitViewControllerDelegate2: AnyObject {
+    func addDeleteButton(_ button: UIButton)
+}
+// удалить привычку
+protocol HabitVCDelegate: AnyObject {
+     func removeHabit(with indexPath: IndexPath)
+}
+protocol HabitVCDelegateChangeHabit: AnyObject {
+    func changeHabit(with indexPath: IndexPath,_ habit: Habit?)
+}
+
+class HabitViewController: UIViewController  {
+
+    var indexPath: IndexPath?
+    var habit = HabitsStore.shared
+    var habits : Habit?
+    var newHabitBool: Bool = true
+    weak var delegate: HabitViewControllerDelegate?
+    weak var delegate2: HabitViewControllerDelegate2?
+    weak var removeDelegate: HabitVCDelegate?
+    weak var changeDelegate: HabitVCDelegateChangeHabit?
+    
     // кнопка сохранить изменения
     private lazy var buttonRight: UIBarButtonItem = {
         var button = UIBarButtonItem(image: nil, style: .plain, target: self, action: #selector(self.didTapButtonRight))
@@ -17,12 +40,21 @@ class HabitViewController: UIViewController {
         button.tintColor = UIColor(named: "Purple")
         return button
        }()
-    weak var delegate: HabitViewControllerDelegate?
     @objc private func didTapButtonRight() {
-        let newHabit = Habit(name: textField.text!,
-                             date: date.date,
-                             color: myButtonColor.backgroundColor!)
-        delegate?.addHabit(newHabit)
+      
+        print("Нажата кнопка сохранить",newHabitBool)
+        if newHabitBool == true {
+            let newHabit = Habit(name: textField.text!,
+                                         date: date.date,
+                                         color: myButtonColor.backgroundColor!)
+            delegate?.addHabit(newHabit)
+        } else {
+            guard let indexPath = self.indexPath else { return }
+            let oldHabit = Habit(name: textField.text!,
+                                 date: date.date,
+                                 color: myButtonColor.backgroundColor!)
+            changeDelegate?.changeHabit(with: indexPath, oldHabit)
+        }
         dismiss(animated: true, completion: nil)
     }
     //кнопка отменить
@@ -60,6 +92,32 @@ class HabitViewController: UIViewController {
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
+    // кнопка удаления привычки
+    private lazy var buttonAlert: UIButton = {
+        let button = UIButton()
+        button.setTitle("Удалить привычку", for: .normal)
+        button.setTitleColor(.systemRed, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self,  action: #selector(didButtonDelete), for: .touchUpInside)
+        return button
+    }()
+
+    @objc func didButtonDelete() {
+        guard let indexPath = self.indexPath else { return }
+        let alertController = UIAlertController(title: "Удалить привычку", message: "Вы хотите удалить привычку \(habit.habits[indexPath.row].name)?", preferredStyle: .alert)
+        let firstAction = UIAlertAction(title: "Удалить", style: .destructive) { _ in
+            print("Удалить")
+            self.removeDelegate?.removeHabit(with: indexPath)
+            self.dismiss(animated: true, completion: nil)
+        }
+        let secondAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in
+            print("Отмена")
+            self.dismiss(animated: true, completion: nil)
+        }
+        alertController.addAction(firstAction)
+        alertController.addAction(secondAction)
+        self.present(alertController, animated: true)
+    }
     // кнопка для пикера
     private lazy var myButtonColor: UIButton = {
         let button = UIButton()
@@ -91,7 +149,7 @@ class HabitViewController: UIViewController {
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0)
-        textField.textColor = .black
+        textField.textColor = UIColor(named: "Black")
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.autocapitalizationType = .none
         textField.backgroundColor = .systemGray6
@@ -176,6 +234,9 @@ class HabitViewController: UIViewController {
     @objc func returnTap() {
         textField.resignFirstResponder()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -190,14 +251,17 @@ class HabitViewController: UIViewController {
         self.myStack.addSubview(self.textLabel4)
         self.myStack.addSubview(self.textLabel5)
         self.view.addSubview(self.date)
+        self.view.addSubview(self.buttonAlert)
         textField.delegate = self
+        // скрывает кнопку удаления привычки
+        delegate2?.addDeleteButton(buttonAlert)
+        print("viewDidLoad HabitVC",newHabitBool)
         self.setupNavBar()
         self.constraints()
         self.setupGesture()
         self.setupDissmissToReturn()
     }
     private func setupNavBar() {
-        self.navigationItem.title = "Создать"
         self.navigationItem.leftBarButtonItem = buttonLeft
         self.navigationItem.rightBarButtonItem = buttonRight
     }
@@ -247,12 +311,16 @@ class HabitViewController: UIViewController {
             date.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             date.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             date.heightAnchor.constraint(equalToConstant: 200),
-
+            //удалить привычку
+            buttonAlert.bottomAnchor.constraint(equalTo: self.view.bottomAnchor,constant: -50),
+            buttonAlert.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            buttonAlert.heightAnchor.constraint(equalToConstant: 30),
+            buttonAlert.widthAnchor.constraint(equalToConstant: 250),
             ])
     }
 }
 extension  HabitViewController: UIColorPickerViewControllerDelegate, UITextFieldDelegate {
-    
+    // сохранение и передача цвета привычки
     @available(iOS 14.0, *)
     func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
         let color = viewController.selectedColor
@@ -263,6 +331,7 @@ extension  HabitViewController: UIColorPickerViewControllerDelegate, UITextField
         let color = viewController.selectedColor
         self.myButtonColor.backgroundColor = color
     }
+    // клавиатура при  нажатии на return или ввод исчезает
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true

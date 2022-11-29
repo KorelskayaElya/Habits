@@ -6,15 +6,12 @@
 //
 
 import UIKit
-//protocol ProgressCollectionDelegate: AnyObject {
-//    func addProgress(_ progress: HabitsStore)
-//}
+// коллекция - первая ячейка  с прогрессом
 class ProgressCollectionViewCell: UICollectionViewCell {
+    // поле прогресса
     private lazy var progressView: UIProgressView = {
         let progress = UIProgressView()
         progress.progressViewStyle = .bar
-        //менять
-        //delegate?.addProgress(HabitsStore.shared.todayProgress)
         progress.setProgress(HabitsStore.shared.todayProgress, animated: true)
         progress.trackTintColor = UIColor.systemGray2
         progress.tintColor = UIColor(named:"Purple")
@@ -23,7 +20,12 @@ class ProgressCollectionViewCell: UICollectionViewCell {
         progress.layer.cornerRadius = 3
         return progress
     }()
-    
+    // устанавливает анимацию бегунка и процент прогресса
+    func setupProgress(with progress: HabitsStore) {
+        self.progressView.setProgress(HabitsStore.shared.todayProgress, animated: true)
+        self.textLabel1.text = "\(Int(HabitsStore.shared.todayProgress*100))%"
+    }
+    // надпись Все получится на ячейке
     private lazy var textLabel: UILabel = {
         let text = UILabel()
         text.text = "Всё получится!"
@@ -32,11 +34,13 @@ class ProgressCollectionViewCell: UICollectionViewCell {
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
+    // надпись процента прогресса
     private lazy var textLabel1: UILabel = {
         let text = UILabel()
-        text.text = "\(Int(HabitsStore.shared.todayProgress))%"
+        text.text = "\(Int(HabitsStore.shared.todayProgress*100))%"
         text.font = UIFont(name: "SF Pro Display", size: 10)
         text.textColor = .systemGray
+        text.textAlignment = .right
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
@@ -50,7 +54,6 @@ class ProgressCollectionViewCell: UICollectionViewCell {
             self.progressView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
             self.progressView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
             self.progressView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 40),
-            self.progressView.widthAnchor.constraint(equalToConstant: 100),
             self.progressView.heightAnchor.constraint(equalToConstant: 6),
             
             self.textLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
@@ -58,9 +61,9 @@ class ProgressCollectionViewCell: UICollectionViewCell {
             self.textLabel.widthAnchor.constraint(equalToConstant: 200),
             self.textLabel.heightAnchor.constraint(equalToConstant: 20),
             
-            self.textLabel1.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10),
+            self.textLabel1.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5),
             self.textLabel1.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
-            self.textLabel1.widthAnchor.constraint(equalToConstant: 40),
+            self.textLabel1.widthAnchor.constraint(equalToConstant: 44),
             self.textLabel1.heightAnchor.constraint(equalToConstant: 20),
            ])
        }
