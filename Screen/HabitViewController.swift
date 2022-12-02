@@ -222,6 +222,9 @@ class HabitViewController: UIViewController  {
         let tap = UITapGestureRecognizer(target: self, action: #selector(returnTap))
         self.view.addGestureRecognizer(tap)
     }
+
+
+
     // установка включения клаватуры при нажатии на контроллер
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -235,8 +238,8 @@ class HabitViewController: UIViewController  {
         textField.resignFirstResponder()
     }
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
+    AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
+        }
     
     override func viewDidLoad() {
         super.viewDidLoad()

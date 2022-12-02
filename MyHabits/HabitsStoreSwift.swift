@@ -79,7 +79,6 @@ public final class Habit: Codable {
         self.a = a
     }
 }
-
 extension Habit: Equatable {
     
     public static func == (lhs: Habit, rhs: Habit) -> Bool {

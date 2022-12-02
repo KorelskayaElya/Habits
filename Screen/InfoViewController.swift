@@ -8,6 +8,7 @@
 import UIKit
 //контроллер с общей информацией о привычках
 class InfoViewController: UIViewController {
+
     //стек для текста
     private var stackView: UIStackView = {
         var stack = UIStackView()
@@ -137,6 +138,14 @@ class InfoViewController: UIViewController {
         line.backgroundColor = UIColor.systemGray2
         return line
     }()
+    override func viewWillAppear(_ animated: Bool) {
+    AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
+        }
+
+//   override func viewWillDisappear(_ animated: Bool) {
+//       super.viewWillDisappear(animated)
+//       AppUtility.lockOrientation(.all)
+//   }
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Информация"

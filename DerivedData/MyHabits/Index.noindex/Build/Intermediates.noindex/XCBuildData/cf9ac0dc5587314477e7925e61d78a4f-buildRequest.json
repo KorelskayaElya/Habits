@@ -1,0 +1,59 @@
+{
+  "_buildCommand2" : {
+    "command" : "prepareForIndexing",
+    "enableIndexBuildArena" : true,
+    "targets" : null
+  },
+  "buildCommand" : "build",
+  "configuredTargets" : [
+    {
+      "guid" : "c76ebc2c80a3e2472f513b08fb9258e803c73f5f42400e843e9b4267b19b81bb"
+    }
+  ],
+  "containerPath" : "/Users/eliss/Desktop/MyHabits/MyHabits.xcodeproj",
+  "continueBuildingAfterErrors" : true,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "indexbuild",
+    "activeArchitecture" : "arm64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "iphonesimulator",
+      "sdk" : "iphonesimulator16.1",
+      "sdkVariant" : "iphonesimulator",
+      "supportedArchitectures" : [
+        "arm64",
+        "x86_64"
+      ],
+      "targetArchitecture" : "arm64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/eliss/Desktop/MyHabits/DerivedData/MyHabits/Index.noindex/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/eliss/Desktop/MyHabits/DerivedData/MyHabits/Index.noindex/Build/Products",
+      "derivedDataPath" : "/Users/eliss/Desktop/MyHabits/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/eliss/Desktop/MyHabits/DerivedData/MyHabits/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/eliss/Desktop/MyHabits/DerivedData/MyHabits/Index.noindex/PrecompiledHeaders",
+      "pchPath" : "/Users/eliss/Desktop/MyHabits/DerivedData/MyHabits/Index.noindex/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO",
+          "INDEX_ARENA_INFO_REGULAR_BUILD_PRODUCTS_DIR" : "/Users/eliss/Desktop/MyHabits/DerivedData/MyHabits/Build/Products",
+          "ONLY_ACTIVE_ARCH" : "YES"
+        }
+      }
+    }
+  },
+  "qos" : "utility",
+  "schemeCommand" : "launch",
+  "schemeCommand2" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

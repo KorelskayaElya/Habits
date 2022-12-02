@@ -4,11 +4,10 @@
 //
 //  Created by Эля Корельская on 29.10.2022.
 //
-
+// Сделана поддержка темной темы
 import UIKit
 // главный экран с ячейками привычек
 class HabitsViewController: UIViewController, HabitViewControllerDelegate2, HabitDetailsVCDelegate, HabitDetailsVCDelegateChangeHabit {
-    
     // скрыть кнопку удаления при создании новой ячейки
     func addDeleteButton(_ button: UIButton) {
         button.isHidden = true
@@ -68,8 +67,10 @@ class HabitsViewController: UIViewController, HabitViewControllerDelegate2, Habi
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
         collection.reloadData()
     }
+
     // навигационный бар
     private func setupNavigationBar() {
         self.navigationItem.title = "Сегодня"
