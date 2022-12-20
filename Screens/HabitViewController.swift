@@ -18,6 +18,7 @@ protocol HabitViewControllerDelegate2: AnyObject {
 protocol HabitVCDelegate: AnyObject {
      func removeHabit(with indexPath: IndexPath)
 }
+// изменение привычки
 protocol HabitVCDelegateChangeHabit: AnyObject {
     func changeHabit(with indexPath: IndexPath,_ habit: Habit?)
 }
@@ -32,6 +33,8 @@ class HabitViewController: UIViewController  {
     weak var delegate2: HabitViewControllerDelegate2?
     weak var removeDelegate: HabitVCDelegate?
     weak var changeDelegate: HabitVCDelegateChangeHabit?
+    weak var habitDetailVC: HabitDetailsViewController?
+    public var updatingDelegate: UpdatingCollectionDataDelegate?
     
     // кнопка сохранить изменения
     private lazy var buttonRight: UIBarButtonItem = {
@@ -41,13 +44,16 @@ class HabitViewController: UIViewController  {
         return button
        }()
     @objc private func didTapButtonRight() {
-      
+        if ((textField.text?.isEmpty) != false) {
+            textField.text = "Забыли заполнить поле"
+        }
         print("Нажата кнопка сохранить",newHabitBool)
         if newHabitBool == true {
             let newHabit = Habit(name: textField.text!,
                                          date: date.date,
                                          color: myButtonColor.backgroundColor!)
             delegate?.addHabit(newHabit)
+            navigationController?.popToRootViewController(animated: true)
         } else {
             guard let indexPath = self.indexPath else { return }
             let oldHabit = Habit(name: textField.text!,
@@ -76,6 +82,12 @@ class HabitViewController: UIViewController  {
         line.backgroundColor = UIColor.systemGray2
         return line
     }()
+    private let dateFormatter: DateFormatter = {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "HH:mm:a"
+            dateFormatter.locale = Locale(identifier: "en_US")
+            return dateFormatter
+        }()
     // стек для содержимого
     private lazy var myStack: UIStackView = {
         let stack = UIStackView()
@@ -108,6 +120,7 @@ class HabitViewController: UIViewController  {
         let firstAction = UIAlertAction(title: "Удалить", style: .destructive) { _ in
             print("Удалить")
             self.removeDelegate?.removeHabit(with: indexPath)
+            //self.updatingDelegate?.updateCollection()
             self.dismiss(animated: true, completion: nil)
         }
         let secondAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in
@@ -119,12 +132,13 @@ class HabitViewController: UIViewController  {
         self.present(alertController, animated: true)
     }
     // кнопка для пикера
-    private lazy var myButtonColor: UIButton = {
+    public lazy var myButtonColor: UIButton = {
         let button = UIButton()
         button.contentMode = .scaleAspectFit
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .blue
         button.layer.cornerRadius = 20
+        button.isUserInteractionEnabled = true
         button.addTarget(self, action: #selector(self.didTapPicker), for: .touchUpInside)
         return button
     }()
@@ -134,7 +148,6 @@ class HabitViewController: UIViewController  {
         picker.supportsAlpha = true
         picker.delegate = self
         present(picker, animated: true, completion: nil)
-        print("цвет")
     }
     // время надпись
     private lazy var textLabel3: UILabel = {
@@ -146,7 +159,7 @@ class HabitViewController: UIViewController  {
         return text
     }()
     // поле ввода
-    private lazy var textField: UITextField = {
+    public lazy var textField: UITextField = {
         let textField = UITextField()
         textField.layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0)
         textField.textColor = UIColor(named: "Black")
@@ -177,25 +190,29 @@ class HabitViewController: UIViewController  {
         return text
     }()
     // надпись
-    private lazy var textLabel5: UILabel = {
+    public lazy var textLabel5: UILabel = {
         let text = UILabel()
-        text.text = "11:50 AM"
+        text.text = dateFormatter.string(from: date.date)
         text.textColor = UIColor(named: "Purple")
         text.font = UIFont(name: "SF Pro Display", size: 13)
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
     // дата
-    private lazy var date: UIDatePicker = {
+    public lazy var date: UIDatePicker = {
         let date = UIDatePicker()
         date.timeZone = NSTimeZone.local
         date.datePickerMode = .time
         date.preferredDatePickerStyle = .wheels
         date.backgroundColor = UIColor(named: "White")
+        date.addTarget(self, action: #selector(changeTime), for: .valueChanged)
         date.translatesAutoresizingMaskIntoConstraints = false
         return date
-        
     }()
+    // преобразование даты в строку
+    @objc func changeTime(sender: UIDatePicker) {
+        textLabel5.text = dateFormatter.string(from: sender.date)
+    }
     // первая клавиатура при ее появлении - русская
     private func getKeyboardLanguage() -> String? {
             return "ru"
@@ -223,8 +240,6 @@ class HabitViewController: UIViewController  {
         self.view.addGestureRecognizer(tap)
     }
 
-
-
     // установка включения клаватуры при нажатии на контроллер
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -237,9 +252,10 @@ class HabitViewController: UIViewController  {
     @objc func returnTap() {
         textField.resignFirstResponder()
     }
+    // отмена поворота экрана
     override func viewWillAppear(_ animated: Bool) {
     AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
-        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -258,7 +274,6 @@ class HabitViewController: UIViewController  {
         textField.delegate = self
         // скрывает кнопку удаления привычки
         delegate2?.addDeleteButton(buttonAlert)
-        print("viewDidLoad HabitVC",newHabitBool)
         self.setupNavBar()
         self.constraints()
         self.setupGesture()
@@ -315,14 +330,15 @@ class HabitViewController: UIViewController  {
             date.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             date.heightAnchor.constraint(equalToConstant: 200),
             //удалить привычку
-            buttonAlert.bottomAnchor.constraint(equalTo: self.view.bottomAnchor,constant: -50),
+            buttonAlert.bottomAnchor.constraint(equalTo: self.view.bottomAnchor,constant: -120),
             buttonAlert.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             buttonAlert.heightAnchor.constraint(equalToConstant: 30),
             buttonAlert.widthAnchor.constraint(equalToConstant: 250),
             ])
     }
 }
-extension  HabitViewController: UIColorPickerViewControllerDelegate, UITextFieldDelegate {
+extension HabitViewController: UIColorPickerViewControllerDelegate, UITextFieldDelegate {
+
     // сохранение и передача цвета привычки
     @available(iOS 14.0, *)
     func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
@@ -342,3 +358,10 @@ extension  HabitViewController: UIColorPickerViewControllerDelegate, UITextField
     
 
 }
+//extension HabitViewController: UpdatingCollectionDataDelegate {
+//    func updateCollection() {
+//        print("hi update")
+//        self.updatingDelegate?.updateCollection()
+//    }
+//
+//}

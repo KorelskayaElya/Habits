@@ -10,11 +10,9 @@ import UIKit
 class InfoViewController: UIViewController {
 
     //стек для текста
-    private var stackView: UIStackView = {
-        var stack = UIStackView()
+    private var contantView: UIView = {
+        var stack = UIView()
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
-        stack.distribution = .fillEqually
         return stack
     }()
    //лейбл с текстом 1
@@ -22,10 +20,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "Привычка за 21 день"
         text.font = UIFont.boldSystemFont(ofSize: 20)
         return text
@@ -35,10 +30,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "Прохождение этапов, за которые за 21 день вырабатывается привычка, подчиняется следующему алгоритму:"
         return text
     }()
@@ -47,10 +39,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "1. Провести 1 день без обращения к старым привычкам, стараться вести себя так, как будто цель, загаданная в перспективу, находится на расстоянии шага."
         return text
     }()
@@ -59,10 +48,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "2. Выдержать 2 дня в прежнем состоянии самоконтроля."
         return text
     }()
@@ -71,10 +57,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "3. Отметить в дневнике первую неделю изменений и подвести первые итоги - что оказалось тяжело, что - легче, с чем еще предстоит серьезно бороться."
         return text
     }()
@@ -83,10 +66,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "4. Поздравить себя с прохождением первого серьезного порога 21 день. За это время отказ от дурных наклонностей уже примет форму осознанног преодоления и человек  сможет больше работать в сторону принятия положительных качеств."
         return text
     }()
@@ -95,10 +75,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "5. Держать планку 40 дней. Практикующий методику уже чувствует себя освободившимся от прошлого негатива и двигается в нужном направлении с хорошей динамикой. "
         return text
     }()
@@ -107,10 +84,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "6. На 90-й день соблюдения техники все лишнее из «прошлой жизни»перестает напоминать о себе, и человек, оглянувшись назад, осознает себя полностью обновившимся.  "
         return text
     }()
@@ -119,10 +93,7 @@ class InfoViewController: UIViewController {
         var text = UILabel()
         text.font = UIFont(name: "SF Pro Text", size: 17)
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.lineBreakMode = .byWordWrapping
         text.numberOfLines = 0
-        text.textAlignment = .left
-        text.contentMode = .scaleAspectFit
         text.text = "Источник: psychbook.ru  "
         return text
     }()
@@ -141,79 +112,75 @@ class InfoViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
     AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
         }
-
-//   override func viewWillDisappear(_ animated: Bool) {
-//       super.viewWillDisappear(animated)
-//       AppUtility.lockOrientation(.all)
-//   }
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Информация"
         view.backgroundColor = UIColor(named:"White")
-        self.view.addSubview(scrollView)
-        self.scrollView.addSubview(self.lineView)
-        self.scrollView.addSubview(self.stackView)
-        self.stackView.addSubview(self.textLabel)
-        self.stackView.addSubview(self.textLabel1)
-        self.stackView.addSubview(self.textLabel2)
-        self.stackView.addSubview(self.textLabel3)
-        self.stackView.addSubview(self.textLabel4)
-        self.stackView.addSubview(self.textLabel5)
-        self.stackView.addSubview(self.textLabel6)
-        self.stackView.addSubview(self.textLabel7)
-        self.stackView.addSubview(self.textLabel8)
-        self.infoConstraint()
+        view.addSubview(scrollView)
+        scrollView.addSubview(self.lineView)
+        scrollView.addSubview(self.contantView)
+        contantView.addSubview(self.textLabel)
+        contantView.addSubview(self.textLabel1)
+        contantView.addSubview(self.textLabel2)
+        contantView.addSubview(self.textLabel3)
+        contantView.addSubview(self.textLabel4)
+        contantView.addSubview(self.textLabel5)
+        contantView.addSubview(self.textLabel6)
+        contantView.addSubview(self.textLabel7)
+        contantView.addSubview(self.textLabel8)
+        infoConstraint()
     }
-    private func infoConstraint() {
+    func infoConstraint() {
         NSLayoutConstraint.activate([
-        scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-        scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-        scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-        scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
-        
-        stackView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor),
-        stackView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor, constant: 8),
-        stackView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor),
-        stackView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
-        stackView.heightAnchor.constraint(equalToConstant: 1000),
-        stackView.widthAnchor.constraint(equalToConstant: 400),
-        
-        textLabel.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
-        textLabel.topAnchor.constraint(equalTo: self.stackView.topAnchor, constant: 8),
+        scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
         
         
-        textLabel1.topAnchor.constraint(equalTo: self.textLabel.bottomAnchor,constant: 12),
-        textLabel1.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
-        textLabel1.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
+        contantView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+        contantView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+        contantView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+        contantView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+        contantView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
         
-        textLabel2.topAnchor.constraint(equalTo: self.textLabel1.bottomAnchor,constant: 8),
-        textLabel2.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel2.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
+        textLabel.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
+        textLabel.topAnchor.constraint(equalTo: contantView.topAnchor, constant: 22),
         
-        textLabel3.topAnchor.constraint(equalTo: self.textLabel2.bottomAnchor,constant: 8),
-        textLabel3.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel3.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
         
-        textLabel4.topAnchor.constraint(equalTo: self.textLabel3.bottomAnchor,constant: 8),
-        textLabel4.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel4.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
+        textLabel1.topAnchor.constraint(equalTo: textLabel.bottomAnchor,constant: 15),
+        textLabel1.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
+        textLabel1.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        
+        textLabel2.topAnchor.constraint(equalTo: textLabel1.bottomAnchor,constant: 15),
+        textLabel2.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel2.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
+        
+        textLabel3.topAnchor.constraint(equalTo: textLabel2.bottomAnchor,constant: 15),
+        textLabel3.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel3.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
+        
+        textLabel4.topAnchor.constraint(equalTo: textLabel3.bottomAnchor,constant: 15),
+        textLabel4.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel4.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
 
-        textLabel5.topAnchor.constraint(equalTo: self.textLabel4.bottomAnchor,constant: 8),
-        textLabel5.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel5.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
+        textLabel5.topAnchor.constraint(equalTo: textLabel4.bottomAnchor,constant: 15),
+        textLabel5.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel5.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
 
-        textLabel6.topAnchor.constraint(equalTo: self.textLabel5.bottomAnchor,constant: 8),
-        textLabel6.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel6.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
+        textLabel6.topAnchor.constraint(equalTo: textLabel5.bottomAnchor,constant: 15),
+        textLabel6.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel6.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
 
-        textLabel7.topAnchor.constraint(equalTo: self.textLabel6.bottomAnchor,constant: 8),
-        textLabel7.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel7.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
+        textLabel7.topAnchor.constraint(equalTo: textLabel6.bottomAnchor,constant: 15),
+        textLabel7.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel7.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
 
-        textLabel8.topAnchor.constraint(equalTo: self.textLabel7.bottomAnchor,constant: 8),
-        textLabel8.leadingAnchor.constraint(equalTo: self.stackView.leadingAnchor),
-        textLabel8.trailingAnchor.constraint(equalTo: self.stackView.trailingAnchor),
+        textLabel8.topAnchor.constraint(equalTo: textLabel7.bottomAnchor,constant: 10),
+        textLabel8.leadingAnchor.constraint(equalTo: contantView.leadingAnchor, constant: 10),
+        textLabel8.trailingAnchor.constraint(equalTo: contantView.trailingAnchor, constant: -10),
+        textLabel8.bottomAnchor.constraint(equalTo: contantView.bottomAnchor, constant: -15)
 
         ])
     }

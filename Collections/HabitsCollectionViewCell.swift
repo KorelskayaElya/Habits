@@ -14,6 +14,7 @@ protocol HabitsCollectionViewDelegate: AnyObject {
 class HabitsCollectionViewCell: UICollectionViewCell {
     weak var clickDelegate: HabitsCollectionViewDelegate?
     var habit: Habit?
+    var isChecked = false
     //стек для привычки
     private lazy var myStack: UIStackView = {
         let stack = UIStackView()
@@ -72,17 +73,19 @@ class HabitsCollectionViewCell: UICollectionViewCell {
         self.textLabel1.text = habitsStore.name
         self.textLabel2.text = habitsStore.dateString
         self.textLabel3.text = "Счетчик: \(habitsStore.trackDates.count)"
-        //уже была выполнена -  закрашена
+        // затрекана
         if habitsStore.isAlreadyTakenToday {
             self.button.tintColor = UIColor(named: "White")
             self.textLabel1.textColor = habitsStore.color
             self.button.layer.borderColor = habitsStore.color.cgColor
             self.button.backgroundColor = habitsStore.color
-        //еще не выполнена - не закрашена
+            //print("Привычка добавлена в отслеживание")
+        // не затрекана
         } else {
             self.textLabel1.textColor = habitsStore.color
             self.button.layer.borderColor = habitsStore.color.cgColor
             self.button.backgroundColor = UIColor(named: "White")
+            //print("Привычка уже отслеживается")
         }
     }
     override init(frame: CGRect) {

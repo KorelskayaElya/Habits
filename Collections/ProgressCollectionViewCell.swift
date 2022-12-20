@@ -29,7 +29,8 @@ class ProgressCollectionViewCell: UICollectionViewCell {
     private lazy var textLabel: UILabel = {
         let text = UILabel()
         text.text = "Всё получится!"
-        text.font = UIFont(name: "SF Pro Display", size: 10)
+        text.font = UIFont(name: "SF Pro Text", size: 13)
+        text.font = .systemFont(ofSize: 13, weight: .semibold)
         text.textColor = .systemGray
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
@@ -38,7 +39,8 @@ class ProgressCollectionViewCell: UICollectionViewCell {
     private lazy var textLabel1: UILabel = {
         let text = UILabel()
         text.text = "\(Int(HabitsStore.shared.todayProgress*100))%"
-        text.font = UIFont(name: "SF Pro Display", size: 10)
+        text.font = UIFont(name: "SF Pro Text", size: 13)
+        text.font = .systemFont(ofSize: 13, weight: .semibold)
         text.textColor = .systemGray
         text.textAlignment = .right
         text.translatesAutoresizingMaskIntoConstraints = false

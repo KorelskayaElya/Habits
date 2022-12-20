@@ -4,17 +4,19 @@
 //
 //  Created by Эля Корельская on 29.10.2022.
 //
-// Сделана поддержка темной темы
+
 import UIKit
+
 // главный экран с ячейками привычек
 class HabitsViewController: UIViewController, HabitViewControllerDelegate2, HabitDetailsVCDelegate, HabitDetailsVCDelegateChangeHabit {
+    
     // скрыть кнопку удаления при создании новой ячейки
     func addDeleteButton(_ button: UIButton) {
         button.isHidden = true
     }
-    
-    let habitViewController = HabitViewController()
     var habit: Habit?
+    private var habitDetailVC: HabitDetailsViewController?
+    
     private lazy var flowLayout : UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -32,6 +34,7 @@ class HabitsViewController: UIViewController, HabitViewControllerDelegate2, Habi
         myCollectionView.delegate = self
         myCollectionView.register(HabitsCollectionViewCell.self, forCellWithReuseIdentifier: "HabitsCollectionViewCell")
         myCollectionView.register(ProgressCollectionViewCell.self, forCellWithReuseIdentifier: "ProgressCollectionViewCell")
+        myCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "defaultcell")
         return myCollectionView
     }()
     // скролл
@@ -48,15 +51,16 @@ class HabitsViewController: UIViewController, HabitViewControllerDelegate2, Habi
     }()
     // кнопка добавить ячейку
     @objc private func didTapButton() {
-        let vc = UINavigationController(rootViewController: habitViewController)
-        habitViewController.title = "Создать"
-        habitViewController.newHabitBool = true
-        vc.modalPresentationStyle = .fullScreen
-        self.present(vc, animated: true)
-        print("кнопка добавить ячейку значит true ",habitViewController.newHabitBool)
-        habitViewController.delegate2 = self
-        habitViewController.delegate = self
-        print("добавить")
+        let vc = HabitViewController()
+        vc.title = "Создать"
+        self.navigationController?.navigationBar.prefersLargeTitles = false
+        // проверяет к новой или старой привычке сейчас происходит обращение
+        vc.newHabitBool = true
+        self.navigationController?.pushViewController(vc, animated: true)
+        // сокрытие кнопки "удалить привычку"
+        vc.delegate2 = self
+        // добавление привычки
+        vc.delegate = self
     }
     
     override func viewDidLoad() {
@@ -118,6 +122,7 @@ extension HabitsViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 return myCell
             } else {
                 let myCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HabitsCollectionViewCell", for: indexPath) as! HabitsCollectionViewCell
+                guard HabitsStore.shared.habits.count > indexPath.row else { return collectionView.dequeueReusableCell(withReuseIdentifier: "defaultcell", for: indexPath) }
                 myCell.backgroundColor = UIColor(named: "White")
                 myCell.layer.cornerRadius = 10
                 let habit = HabitsStore.shared.habits[indexPath.row]
@@ -125,12 +130,14 @@ extension HabitsViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 myCell.clickDelegate = self
                 return myCell
             }
+            
         }
         // при нажатии на ячейку 1 секции переход на habitDetailVC
         func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            if indexPath.section == 1 {
+            if indexPath.section != 0 {
                 let habitVC = HabitViewController()
-                let habitDetailVC = HabitDetailsViewController()
+                let habit = HabitsStore.shared.habits[indexPath.row]
+                let habitDetailVC = HabitDetailsViewController(habit: habit)
                 habitDetailVC.delegate = self
                 habitVC.delegate = self
                 habitVC.changeDelegate = self
@@ -139,12 +146,10 @@ extension HabitsViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 habitVC.indexPath = indexPath
                 habitDetailVC.indexPath = indexPath
                 habitVC.habits = HabitsStore.shared.habits[indexPath.row]
-                habitDetailVC.habit = HabitsStore.shared.habits[indexPath.row]
                 // передача названия привычки в заголовок
                 habitDetailVC.title =  HabitsStore.shared.habits[indexPath.row].name
                 self.navigationController?.pushViewController(habitDetailVC, animated: true)
-            } else {
-                print("0 секция")
+                habitDetailVC.updatingDelegate = self
             }
         }
         func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -155,8 +160,9 @@ extension HabitsViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 return CGSize(width: (self.view.frame.size.width - 40), height: (self.view.frame.size.width - 270))
             }
         }
+    
 }
-extension HabitsViewController: HabitViewControllerDelegate,  HabitsCollectionViewDelegate, HabitVCDelegate, HabitVCDelegateChangeHabit {
+extension HabitsViewController: HabitViewControllerDelegate,  HabitsCollectionViewDelegate, HabitVCDelegate, HabitVCDelegateChangeHabit, UpdatingCollectionDataDelegate {
     // изменить привычку
     func changeHabit(with indexPath: IndexPath, _ habit: Habit?) {
         HabitsStore.shared.habits[indexPath.row].name = habit!.name
@@ -183,6 +189,14 @@ extension HabitsViewController: HabitViewControllerDelegate,  HabitsCollectionVi
     func addHabit(_ habit: Habit) {
         let store = HabitsStore.shared
         store.habits.append(habit)
+        collection.reloadData()
         print("\(habit.name)", "\(habit.date)", "\(habit.color)")
     }
+    func updateCollection() {
+        print("collection.reload")
+        collection.reloadData()
+    }
 }
+
+
+

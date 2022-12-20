@@ -10,16 +10,27 @@ import UIKit
 protocol HabitDetailsVCDelegate: AnyObject {
     func removeHabit(with indexPath: IndexPath)
 }
+// изменение привычки
 protocol HabitDetailsVCDelegateChangeHabit: AnyObject {
     func changeHabit(with indexPath: IndexPath, _ habit: Habit?)
 }
+protocol UpdatingCollectionDataDelegate: AnyObject {
+    func updateCollection()
+}
 class HabitDetailsViewController: UIViewController {
     var indexPath: IndexPath?
-    var habit: Habit?
+    public var habit: Habit?
+    // массив дат
     var datas: [Date] = HabitsStore.shared.dates
     weak var delegate: HabitDetailsVCDelegate?
     weak var changeHabit: HabitDetailsVCDelegateChangeHabit?
-
+    private var habitVC = HabitViewController()
+    weak var updatingDelegate: UpdatingCollectionDataDelegate?
+    // инициализация привычки
+    init(habit: Habit) {
+        self.habit = habit
+        super.init(nibName: nil, bundle: nil)
+    }
     // кнопка править
     private lazy var buttonRight: UIBarButtonItem = {
         var button = UIBarButtonItem(image: nil, style: .plain, target: self, action: #selector(self.didTapButtonRight))
@@ -27,21 +38,30 @@ class HabitDetailsViewController: UIViewController {
         button.tintColor = UIColor(named: "Purple")
         return button
        }()
+    // действие нажатия на кнопку править
     @objc private func didTapButtonRight() {
         print("Править")
-        let habitVC = HabitViewController()
-        let vc = UINavigationController(rootViewController: habitVC)
         habitVC.indexPath = indexPath
         habitVC.title = "Править"
         habitVC.newHabitBool = false
-        print("кнопка править ячейку занчит false",habitVC.newHabitBool)
-        habitVC.removeDelegate = self
+        // проверка на кнопку править или создать
+        habitVC.habitDetailVC = self
+        self.navigationController?.pushViewController(habitVC, animated: true)
+       
+        // должен отображать данные для изменения привычки
+        self.habitVC.textField.text = self.habit?.name
+        self.habitVC.date.date = self.habit!.date
+        self.habitVC.myButtonColor.backgroundColor = self.habit?.color
+        // изменить привычку
         habitVC.changeDelegate = self
-        vc.modalPresentationStyle = .fullScreen
-        self.present(vc, animated: true)
+        // удалить привычку
+        habitVC.removeDelegate = self
+        // должен обновить данные при удалении привычки
+        updatingDelegate?.updateCollection()
     }
+    // линия разделения бара и вью
     private var lineView: UIView =  {
-        var line = UIView(frame: CGRect(x:0, y: 0, width: 1014, height:1))
+        var line = UIView(frame: CGRect(x: 0, y: 0, width: 1014, height:1))
         line.backgroundColor = UIColor.systemGray2
         return line
     }()
@@ -57,15 +77,19 @@ class HabitDetailsViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    // отмена поворота экрана
     override func viewWillAppear(_ animated: Bool) {
     AppDelegate.AppUtility.lockOrientation(UIInterfaceOrientationMask.portrait, andRotateTo: UIInterfaceOrientation.portrait)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "White")
         self.setupNavigationBar()
         self.setupView()
-       
     }
     // навигационный бар
     private func setupNavigationBar() {
@@ -103,14 +127,20 @@ extension HabitDetailsViewController: UITableViewDelegate, UITableViewDataSource
     // данные для заполнения таблицы
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "dateCell", for: indexPath) as! HabitDetailsTableViewCell
+        // все даты с момента существования привычки
         cell.titleLabel.text = HabitsStore.shared.trackDateString(forIndex: indexPath.row)
+        if HabitsStore.shared.habit(habit! , isTrackedIn: HabitsStore.shared.dates[indexPath.row]) == true {
+            // отметка дат, в которые была затрекана привычка
+            cell.accessoryType = .checkmark
+        }
+        cell.isUserInteractionEnabled = false
         return cell
     }
 }
 
 extension HabitDetailsViewController: HabitVCDelegate, HabitVCDelegateChangeHabit {
+    // изменение привычки
     func changeHabit(with indexPath: IndexPath, _ habit: Habit?) {
-        print("Изменение HabitDetailsViewController : HabitVCDelegate")
         self.navigationController?.popToRootViewController(animated: true)
         self.changeHabit?.changeHabit(with: indexPath, habit)
     }
@@ -121,3 +151,5 @@ extension HabitDetailsViewController: HabitVCDelegate, HabitVCDelegateChangeHabi
         self.delegate?.removeHabit(with: indexPath)
     }
 }
+
+
