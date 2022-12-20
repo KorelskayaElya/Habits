@@ -174,10 +174,7 @@ extension HabitsViewController: HabitViewControllerDelegate,  HabitsCollectionVi
     // удалить привычку
     func removeHabit(with indexPath: IndexPath) {
         HabitsStore.shared.habits.remove(at: indexPath.row)
-        collection.performBatchUpdates {
-            collection.deleteItems(at: [indexPath])
-            collection.reloadData()
-        }
+        collection.reloadData()
     }
     // затрекать привычку
     func clickOnCircle(_ habit: Habit) {

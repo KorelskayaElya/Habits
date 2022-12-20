@@ -355,13 +355,5 @@ extension HabitViewController: UIColorPickerViewControllerDelegate, UITextFieldD
         textField.resignFirstResponder()
         return true
     }
-    
-
 }
-//extension HabitViewController: UpdatingCollectionDataDelegate {
-//    func updateCollection() {
-//        print("hi update")
-//        self.updatingDelegate?.updateCollection()
-//    }
-//
-//}
+
