@@ -6,23 +6,22 @@
 //
 
 import UIKit
-// коллекции привычек
-// протокол нажатия на круг на ячейке (затрекать привычку)
+/// коллекции привычек
+/// протокол нажатия на круг на ячейке (затрекать привычку)
 protocol HabitsCollectionViewDelegate: AnyObject {
-    func clickOnCircle(_ habit: Habit)
+    func clickOnCircle(_ habit: Habit, indexPath: IndexPath)
 }
+
 class HabitsCollectionViewCell: UICollectionViewCell {
-    weak var clickDelegate: HabitsCollectionViewDelegate?
-    var habit: Habit?
-    var isChecked = false
-    //стек для привычки
+    // MARK: - UI
+    /// стек для привычки
     private lazy var myStack: UIStackView = {
         let stack = UIStackView()
         stack.contentMode = .scaleAspectFit
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
-    // название привычки
+    /// название привычки
     private lazy var textLabel1: UILabel = {
         let text = UILabel()
         text.textColor = UIColor(named: "Blue")
@@ -33,7 +32,7 @@ class HabitsCollectionViewCell: UICollectionViewCell {
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
-    // время привычки
+    /// время привычки
     private lazy var textLabel2: UILabel = {
         let text = UILabel()
         text.font = UIFont(name: "SF Pro Display", size: 12)
@@ -41,14 +40,14 @@ class HabitsCollectionViewCell: UICollectionViewCell {
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
-    // счетчик выполнения привычки
+    /// счетчик выполнения привычки
     private lazy var textLabel3: UILabel = {
         let text = UILabel()
         text.font = UIFont(name: "SF Pro Display", size: 13)
         text.translatesAutoresizingMaskIntoConstraints = false
         return text
     }()
-    // кнопка выполнения привычки
+    /// кнопка выполнения привычки
     private lazy var button: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(named: "White")
@@ -61,75 +60,113 @@ class HabitsCollectionViewCell: UICollectionViewCell {
         button.tintColor = UIColor(named: "White")
         return button
     }()
-    // выполнение привычки
-    @objc func didButtonClick() {
-        if let habit = habit {
-            clickDelegate?.clickOnCircle(habit)
-        }
-    }
-    // установление новой привычки
-    func setupNewHabit(with habitsStore: Habit) {
-        self.habit = habitsStore
-        self.textLabel1.text = habitsStore.name
-        self.textLabel2.text = habitsStore.dateString
-        self.textLabel3.text = "Счетчик: \(habitsStore.trackDates.count)"
-        // затрекана
-        if habitsStore.isAlreadyTakenToday {
-            self.button.tintColor = UIColor(named: "White")
-            self.textLabel1.textColor = habitsStore.color
-            self.button.layer.borderColor = habitsStore.color.cgColor
-            self.button.backgroundColor = habitsStore.color
-            //print("Привычка добавлена в отслеживание")
-        // не затрекана
-        } else {
-            self.textLabel1.textColor = habitsStore.color
-            self.button.layer.borderColor = habitsStore.color.cgColor
-            self.button.backgroundColor = UIColor(named: "White")
-            //print("Привычка уже отслеживается")
-        }
-    }
+    // MARK: - Properties
+    weak var clickDelegate: HabitsCollectionViewDelegate?
+    var habit: Habit?
+    var indexPath: IndexPath?
+    private let calendar: Calendar = .current
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setupView()
-       }
+        setupView()
+    }
     required init? (coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    private func setupView() {
-        self.contentView.addSubview(self.myStack)
-        self.myStack.addSubview(self.textLabel1)
-        self.myStack.addSubview(self.textLabel2)
-        self.myStack.addSubview(self.textLabel3)
-        self.myStack.addSubview(self.button)
-        
-        NSLayoutConstraint.activate([
-            // стек
-            self.myStack.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.myStack.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
-            self.myStack.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
-            self.myStack.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
-            // название привычки
-            self.textLabel1.topAnchor.constraint(equalTo: self.myStack.topAnchor, constant: 10),
-            self.textLabel1.leadingAnchor.constraint(equalTo: self.myStack.leadingAnchor, constant: 15),
-            self.textLabel1.heightAnchor.constraint(equalToConstant: 30),
-            self.textLabel1.widthAnchor.constraint(equalToConstant: 280),
-            // время привычки
-            self.textLabel2.topAnchor.constraint(equalTo: self.textLabel1.bottomAnchor),
-            self.textLabel2.leadingAnchor.constraint(equalTo: self.myStack.leadingAnchor, constant: 15),
-            self.textLabel2.heightAnchor.constraint(equalToConstant: 20),
-            self.textLabel2.widthAnchor.constraint(equalToConstant: 200),
-            // счетчик выполнения
-            self.textLabel3.bottomAnchor.constraint(equalTo: self.myStack.bottomAnchor, constant: -20),
-            self.textLabel3.leadingAnchor.constraint(equalTo: self.myStack.leadingAnchor, constant: 15),
-            self.textLabel3.heightAnchor.constraint(equalToConstant: 20),
-            self.textLabel3.widthAnchor.constraint(equalToConstant: 150),
-            // кнопка выполнения привычки
-            self.button.trailingAnchor.constraint(equalTo: self.myStack.trailingAnchor, constant: -30),
-            self.button.topAnchor.constraint(equalTo: self.myStack.topAnchor, constant: 50),
-            self.button.heightAnchor.constraint(equalToConstant: 40),
-            self.button.widthAnchor.constraint(equalToConstant: 40),
+    
+    // MARK: - Private
+    /// Выполнение или отмена выполнения привычки
+    @objc private func didButtonClick() {
+        guard let habit = habit, let indexPath = indexPath else {
+           return
+       }
+        if habit.isAlreadyTakenToday {
+            /// Привычка была затрекана сегодня, отменяем выполнение
+            if let index = habit.trackDates.lastIndex(where: { calendar.isDateInToday($0) }) {
+                habit.trackDates.remove(at: index)
+            }
+        } else {
+            /// Привычка не была затрекана сегодня, добавляем новую дату
+            habit.trackDates.append(Date())
+        }
 
-        ])
+        /// Обновляем текст счетчика
+        textLabel3.text = "Счетчик: \(habit.trackDates.count)"
+
+        /// Обновляем стиль кнопки круга
+        updateButtonStyle(habit.isAlreadyTakenToday, habit: habit)
+        
+        /// Уведомляем делегата о нажатии на круг
+        clickDelegate?.clickOnCircle(habit, indexPath: indexPath)
     }
 
+    /// Обновление стиля кнопки круга на основе выполнения привычки
+    private func updateButtonStyle(_ isChecked: Bool, habit: Habit) {
+        if isChecked {
+            /// Привычка была затрекана сегодня
+            button.tintColor = UIColor(named: "White")
+            textLabel1.textColor = habit.color
+            button.layer.borderColor = habit.color.cgColor
+            button.backgroundColor = habit.color
+        } else {
+            /// Привычка не была затрекана сегодня
+            textLabel1.textColor = habit.color
+            button.layer.borderColor = habit.color.cgColor
+            button.backgroundColor = UIColor(named: "White")
+        }
+    }
+
+
+    private func setupView() {
+        contentView.addSubview(myStack)
+        myStack.addSubview(textLabel1)
+        myStack.addSubview(textLabel2)
+        myStack.addSubview(textLabel3)
+        myStack.addSubview(button)
+        
+        NSLayoutConstraint.activate([
+            /// стек
+            myStack.topAnchor.constraint(equalTo: contentView.topAnchor),
+            myStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            myStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            myStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            /// название привычки
+            textLabel1.topAnchor.constraint(equalTo: myStack.topAnchor, constant: 10),
+            textLabel1.leadingAnchor.constraint(equalTo: myStack.leadingAnchor, constant: 15),
+            textLabel1.heightAnchor.constraint(equalToConstant: 30),
+            textLabel1.widthAnchor.constraint(equalToConstant: 280),
+            /// время привычки
+            textLabel2.topAnchor.constraint(equalTo: textLabel1.bottomAnchor),
+            textLabel2.leadingAnchor.constraint(equalTo: myStack.leadingAnchor, constant: 15),
+            textLabel2.heightAnchor.constraint(equalToConstant: 20),
+            textLabel2.widthAnchor.constraint(equalToConstant: 200),
+            /// счетчик выполнения
+            textLabel3.bottomAnchor.constraint(equalTo: myStack.bottomAnchor, constant: -20),
+            textLabel3.leadingAnchor.constraint(equalTo: myStack.leadingAnchor, constant: 15),
+            textLabel3.heightAnchor.constraint(equalToConstant: 20),
+            textLabel3.widthAnchor.constraint(equalToConstant: 150),
+            /// кнопка выполнения привычки
+            button.trailingAnchor.constraint(equalTo: myStack.trailingAnchor, constant: -30),
+            button.topAnchor.constraint(equalTo: myStack.topAnchor, constant: 40),
+            button.heightAnchor.constraint(equalToConstant: 40),
+            button.widthAnchor.constraint(equalToConstant: 40),
+            
+        ])
+    }
+    
+    // MARK: - Method
+    /// установление новой привычки
+    func setupNewHabit(with habitsStore: Habit, indexPath: IndexPath) {
+        habit = habitsStore
+        textLabel1.text = habitsStore.name
+        textLabel2.text = habitsStore.dateString
+        self.indexPath = indexPath
+       
+        DispatchQueue.main.async {
+            self.textLabel3.text = "Счетчик: \(self.habit!.trackDates.count)"
+            self.updateButtonStyle(self.habit!.isAlreadyTakenToday, habit: self.habit!)
+            self.layoutIfNeeded()
+        }
+       
+    }
 }

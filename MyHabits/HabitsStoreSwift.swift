@@ -44,10 +44,15 @@ public final class Habit: Codable {
     
     /// Показывает, была ли сегодня добавлена привычка.
     public var isAlreadyTakenToday: Bool {
-        guard let lastTrackDate = trackDates.last else {
-            return false
+        get {
+            guard let lastTrackDate = trackDates.last else {
+                return false
+            }
+            return calendar.isDateInToday(lastTrackDate)
         }
-        return calendar.isDateInToday(lastTrackDate)
+        set {
+            
+        }
     }
     
     private var r: CGFloat
@@ -155,9 +160,14 @@ public final class HabitsStore {
     /// Добавляет текущую дату в trackDates для переданной привычки.
     /// - Parameter habit: Привычка, в которую добавится новая дата.
     public func track(_ habit: Habit) {
-        habit.trackDates.append(.init())
-        save()
+        /// Проверяем, была ли привычка уже затрекана сегодня
+        if !habit.isAlreadyTakenToday {
+            // Привычка еще не затрекана сегодня, добавляем новую дату
+            habit.trackDates.append(.init())
+            save()
+        }
     }
+
     
     /// Возвращает отформатированное время для даты.
     /// - Parameter index: Индекс в массиве dates.
@@ -203,7 +213,7 @@ private extension Date {
     static func dates(from fromDate: Date, to toDate: Date) -> [Date] {
         var dates: [Date] = []
         var date = fromDate
-
+        
         while date <= toDate {
             dates.append(date)
             guard let newDate = Calendar.current.date(byAdding: .day, value: 1, to: date) else {

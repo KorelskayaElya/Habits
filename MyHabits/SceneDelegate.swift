@@ -8,10 +8,10 @@
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
     var window: UIWindow?
-
-
+    
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         if #available(iOS 16.0, *) {
@@ -39,9 +39,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             $1.tabBarItem.image = $0 == 0
             ? UIImage(systemName: "rectangle.grid.1x2.fill")
             : UIImage(systemName: "info.circle.fill")
-           
+            
         }
-
+        
         self.window?.rootViewController = tabBarController
         self.window?.makeKeyAndVisible()
     }
