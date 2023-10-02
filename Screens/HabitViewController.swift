@@ -260,18 +260,20 @@ class HabitViewController: UIViewController  {
         if ((textField.text?.isEmpty) != false) {
             textField.text = "Забыли заполнить поле"
         }
-        print("Нажата кнопка сохранить",newHabitBool)
+        print("Нажата кнопка сохранить", newHabitBool)
         if newHabitBool == true {
             let newHabit = Habit(name: textField.text!,
                                  date: date.date,
-                                 color: myButtonColor.backgroundColor!)
+                                 color: myButtonColor.backgroundColor!,
+                                 id: UUID().uuidString)
             delegate?.addHabit(newHabit)
             navigationController?.popToRootViewController(animated: true)
         } else {
             guard let indexPath = self.indexPath else { return }
             let oldHabit = Habit(name: textField.text!,
                                  date: date.date,
-                                 color: myButtonColor.backgroundColor!)
+                                 color: myButtonColor.backgroundColor!,
+                                 id: UUID().uuidString)
             changeDelegate?.changeHabit(with: indexPath, oldHabit)
         }
         dismiss(animated: true, completion: nil)

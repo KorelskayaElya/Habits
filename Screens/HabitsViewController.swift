@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import UserNotifications
+
 
 /// главный экран с ячейками привычек
 class HabitsViewController: UIViewController {
     // MARK: - Properties
     var habit: Habit?
     private var habitDetailVC: HabitDetailsViewController?
+    let notificationService = LocalNotificationsService()
     // MARK: - UI
     private lazy var flowLayout : UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -167,7 +170,8 @@ extension HabitsViewController: UICollectionViewDelegate, UICollectionViewDataSo
 extension HabitsViewController: HabitVCDelegate {
     /// удалить привычку
     func removeHabit(with indexPath: IndexPath) {
-        HabitsStore.shared.habits.remove(at: indexPath.row)
+        let habit = HabitsStore.shared.habits.remove(at: indexPath.row)
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [habit.id])
         collection.reloadData()
     }
     
@@ -192,6 +196,11 @@ extension HabitsViewController: HabitVCDelegateChangeHabit {
         HabitsStore.shared.habits[indexPath.row].date = habit.date
         HabitsStore.shared.habits[indexPath.row].color = habit.color
         
+        
+        let oldHabit = HabitsStore.shared.habits[indexPath.row]
+           UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [oldHabit.id])
+        notificationService.scheduleNotification(for: habit)
+        
         collection.reloadItems(at: updatedIndexPaths)
     }
 }
@@ -202,6 +211,7 @@ extension HabitsViewController: HabitViewControllerDelegate {
         let store = HabitsStore.shared
         store.habits.append(habit)
         collection.reloadData()
+        notificationService.scheduleNotification(for: habit)
         print("\(habit.name)", "\(habit.date)", "\(habit.color)")
     }
 }

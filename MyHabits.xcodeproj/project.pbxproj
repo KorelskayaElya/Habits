@@ -10,6 +10,7 @@
 		6D3D85C3290FF9F50040B013 /* HabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3D85C2290FF9F50040B013 /* HabitViewController.swift */; };
 		6D3D85C52912B8BE0040B013 /* HabitsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3D85C42912B8BE0040B013 /* HabitsCollectionViewCell.swift */; };
 		6D3D85C72912D61F0040B013 /* HabitDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3D85C62912D61F0040B013 /* HabitDetailsViewController.swift */; };
+		6D6A85412ACAC98700EC479D /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6A85402ACAC98700EC479D /* Notifications.swift */; };
 		6D70004529219270003DFBBF /* ProgressCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D70004429219270003DFBBF /* ProgressCollectionViewCell.swift */; };
 		6D70004729229EB4003DFBBF /* HabitDetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D70004629229EB4003DFBBF /* HabitDetailsTableViewCell.swift */; };
 		6D700132294A6D64003DFBBF /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D700134294A6D64003DFBBF /* Launch Screen.storyboard */; };
@@ -38,6 +39,7 @@
 		6D3D85C2290FF9F50040B013 /* HabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitViewController.swift; sourceTree = "<group>"; };
 		6D3D85C42912B8BE0040B013 /* HabitsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsCollectionViewCell.swift; sourceTree = "<group>"; };
 		6D3D85C62912D61F0040B013 /* HabitDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailsViewController.swift; sourceTree = "<group>"; };
+		6D6A85402ACAC98700EC479D /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		6D70004429219270003DFBBF /* ProgressCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCollectionViewCell.swift; sourceTree = "<group>"; };
 		6D70004629229EB4003DFBBF /* HabitDetailsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailsTableViewCell.swift; sourceTree = "<group>"; };
 		6D700133294A6D64003DFBBF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				6DE74ADB290D331E0048F4F2 /* AppDelegate.swift */,
 				6DE74ADD290D331E0048F4F2 /* SceneDelegate.swift */,
 				6DE74AF3290D33C60048F4F2 /* HabitsStoreSwift.swift */,
+				6D6A85402ACAC98700EC479D /* Notifications.swift */,
 				6D700134294A6D64003DFBBF /* Launch Screen.storyboard */,
 				6DE74AE4290D331F0048F4F2 /* Assets.xcassets */,
 				6DE74AE9290D331F0048F4F2 /* Info.plist */,
@@ -195,6 +198,7 @@
 			files = (
 				6DE74ADC290D331E0048F4F2 /* AppDelegate.swift in Sources */,
 				6D3D85C52912B8BE0040B013 /* HabitsCollectionViewCell.swift in Sources */,
+				6D6A85412ACAC98700EC479D /* Notifications.swift in Sources */,
 				6D3D85C3290FF9F50040B013 /* HabitViewController.swift in Sources */,
 				6D70004729229EB4003DFBBF /* HabitDetailsTableViewCell.swift in Sources */,
 				6D3D85C72912D61F0040B013 /* HabitDetailsViewController.swift in Sources */,

@@ -19,6 +19,8 @@ public final class Habit: Codable {
     /// Даты выполнения привычки.
     public var trackDates: [Date]
     
+    public var id: String
+    
     /// Цвет привычки для выделения в списке.
     public var color: UIColor {
         get {
@@ -69,10 +71,11 @@ public final class Habit: Codable {
     
     private lazy var calendar: Calendar = .current
     
-    public init(name: String, date: Date, trackDates: [Date] = [], color: UIColor) {
+    public init(name: String, date: Date, trackDates: [Date] = [], color: UIColor, id: String) {
         self.name = name
         self.date = date
         self.trackDates = trackDates
+        self.id = id
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
@@ -82,9 +85,11 @@ public final class Habit: Codable {
         self.g = g
         self.b = b
         self.a = a
+        self.id = UUID().uuidString
     }
 }
 extension Habit: Equatable {
+    
     
     public static func == (lhs: Habit, rhs: Habit) -> Bool {
         lhs.name == rhs.name &&
@@ -224,4 +229,5 @@ private extension Date {
         return dates
     }
 }
+
 
