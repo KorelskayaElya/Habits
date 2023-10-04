@@ -167,6 +167,7 @@ class HabitsCollectionViewCell: UICollectionViewCell {
             self.updateButtonStyle(self.habit!.isAlreadyTakenToday, habit: self.habit!)
             self.layoutIfNeeded()
         }
+        layoutIfNeeded()
        
     }
 }

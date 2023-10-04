@@ -189,6 +189,9 @@ extension HabitsViewController: HabitVCDelegateChangeHabit {
         guard let habit = habit else {
             return
         }
+        let oldHabit = HabitsStore.shared.habits[indexPath.row]
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [oldHabit.id])
+
         
         let updatedIndexPaths = [indexPath]
         
@@ -196,10 +199,8 @@ extension HabitsViewController: HabitVCDelegateChangeHabit {
         HabitsStore.shared.habits[indexPath.row].date = habit.date
         HabitsStore.shared.habits[indexPath.row].color = habit.color
         
-        
-        let oldHabit = HabitsStore.shared.habits[indexPath.row]
-           UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [oldHabit.id])
-        notificationService.scheduleNotification(for: habit)
+        notificationService.scheduleNotification(for: HabitsStore.shared.habits[indexPath.row])
+
         
         collection.reloadItems(at: updatedIndexPaths)
     }
@@ -212,7 +213,6 @@ extension HabitsViewController: HabitViewControllerDelegate {
         store.habits.append(habit)
         collection.reloadData()
         notificationService.scheduleNotification(for: habit)
-        print("\(habit.name)", "\(habit.date)", "\(habit.color)")
     }
 }
 // MARK: - HabitsCollectionViewDelegate
@@ -225,6 +225,7 @@ extension HabitsViewController: HabitsCollectionViewDelegate {
             collection.reloadItems(at: [indexPath]) /// Обновление ячейки
             /// обновление прогресса
             updateProgress()
+            
         }
     }
 }
